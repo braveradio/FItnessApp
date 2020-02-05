@@ -32,6 +32,7 @@ namespace Fitness.CMD
             #endregion
 
             var userController = new UserController(name);
+            var eatingController = new EatingController(userController.CurrentUser);
             if (userController.IsNewUser)
             {
                 Console.WriteLine("Input gender: ");
@@ -44,9 +45,42 @@ namespace Fitness.CMD
 
                 userController.SetNewUserData(gender, birthDate, weight, height);
             }
-
+           
+            
             Console.WriteLine(userController.CurrentUser);
+
+            Console.WriteLine("What do you wand to do?");
+            Console.WriteLine("E - ввести прием пищи");
+            var key = Console.ReadKey();
+
+            if(key.Key == ConsoleKey.E)
+            {
+                var foods = EnterEating();
+                eatingController.Add(foods.Food, foods.Weight);
+
+                foreach (var item in eatingController.Eating.Foods)
+                {
+                    Console.WriteLine($"\t{item.Key} - {item.Value}");
+                }
+            }
+
             Console.ReadLine();
+        }
+
+        private static (Food Food, double Weight) EnterEating()
+        {
+            Console.Write("Input name of product: ");
+            var food = Console.ReadLine();
+
+            var calories = ParseDouble("Calorific value");
+            var proteins = ParseDouble("proteins");
+            var fats = ParseDouble("fats");
+            var carbs = ParseDouble("carbohydrates");
+
+            var weight = ParseDouble("Weight or portion");
+            var product = new Food(food, calories, proteins, fats, carbs);
+
+            return (product, weight);
         }
 
         private static DateTime ParseDateTime()
@@ -80,7 +114,7 @@ namespace Fitness.CMD
                 }
                     else
                 {
-                    Console.WriteLine($"Incorrect format of name: {name}");
+                    Console.WriteLine($"Incorrect format of field: {name}");
                 }
             }
         }
